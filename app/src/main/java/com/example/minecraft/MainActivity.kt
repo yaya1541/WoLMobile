@@ -18,6 +18,7 @@ import kotlinx.coroutines.withContext
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import androidx.core.content.edit
 
 class MainActivity : ComponentActivity() {
     private lateinit var etMacAddress: EditText
@@ -32,11 +33,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.main)
 
-
         etMacAddress = findViewById(R.id.MacAdress)
         etBroadcastAddress = findViewById(R.id.Adress)
         etPort = findViewById(R.id.Port)
         btnWakeUp = findViewById(R.id.WakeUp)
+
+        loadSavedPreferences()
 
         btnWakeUp.setOnClickListener {
             val macAddress = etMacAddress.text.toString()
@@ -58,11 +60,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun savePreferences(macAddress: String, broadcastAddress: String, port: Int) {
-        val editor = getSharedPreferences(sharedPrefName, MODE_PRIVATE).edit()
-        editor.putString("macAddress", macAddress)
-        editor.putString("broadcastAddress", broadcastAddress)
-        editor.putInt("port", port)
-        editor.apply()
+        getSharedPreferences(sharedPrefName, MODE_PRIVATE).edit() {
+            putString("macAddress", macAddress)
+            putString("broadcastAddress", broadcastAddress)
+            putInt("port", port)
+        }
     }
 
     private fun isValidMacAddress(macAddress: String): Boolean {
